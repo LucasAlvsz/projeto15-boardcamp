@@ -9,3 +9,22 @@ export const getCategories = async (req, res) => {
 		res.sendStatus(500)
 	}
 }
+
+export const postCategory = async (req, res) => {
+	const { name } = req.body
+	try {
+		const result = connection.query(
+			`INSERT INTO categories (name) 
+			VALUES ($1) 
+			WHERE NOT EXISTS (
+				SELECT name FROM categories WHERE name = $1
+				);
+			`,
+			[name]
+		)
+		res.send(result)
+	} catch (err) {
+		console.log(err)
+		res.status(500)
+	}
+}
