@@ -1,5 +1,5 @@
 import Joi from "joi"
-import getCategoriesId from "../services/getCategoriesId.js"
+import validateCategoryId from "../services/validateCategoryId.js"
 
 export const getGamesFormatter = async (req, res, next) => {
 	if (!req.query.name) res.locals.query = "%"
@@ -8,7 +8,6 @@ export const getGamesFormatter = async (req, res, next) => {
 }
 
 export const postGameValidation = async (req, res, next) => {
-	const categoriesIds = await getCategoriesId()
 	const schema = Joi.object({
 		name: Joi.string().required(),
 		image: Joi.string().required(),
@@ -19,7 +18,9 @@ export const postGameValidation = async (req, res, next) => {
 	const { error } = schema.validate(req.body, { abortEarly: false })
 	if (error)
 		return res.status(400).send(error.details.map(({ message }) => message))
-	if (!categoriesIds.find(id => id.id === req.body.categoryId))
-		return res.sendStatus(400)
+
+	const idValidation = await validateCategoryId(req.body.categoryId)
+	if (idValidation === -1) return res.sendStatus(500)
+	if (!idValidation) return res.sendStatus(400)
 	next()
 }
