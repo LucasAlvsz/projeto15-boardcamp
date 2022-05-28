@@ -1,20 +1,16 @@
 import db from "../db/index.js"
 
 export const getGames = async (req, res) => {
-	const { name } = req.query
+	const { query } = res.locals
 	try {
-		if (name) {
-			const { rows } = await db.query(`--sql
+		const { rows } = await db.query(
+			`--sql
 				SELECT games.*, categories.name as "categoryName" FROM games
 				JOIN categories ON games."categoryId" = categories.id
-				WHERE games.name ILIKE '%${name}%'
-				`)
-			return res.send(rows)
-		}
-		const { rows } = await db.query(`--sql
-			SELECT games.*, categories.name as "categoryName" FROM games
-			JOIN categories ON games."categoryId" = categories.id
-		`)
+				WHERE games.name ILIKE $1
+				`,
+			[query]
+		)
 		res.send(rows)
 	} catch (err) {
 		console.log(err)

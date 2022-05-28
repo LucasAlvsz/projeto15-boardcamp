@@ -1,6 +1,12 @@
 import Joi from "joi"
 import getCategoriesId from "../services/getCategoriesId.js"
 
+export const getGamesFormatter = async (req, res, next) => {
+	if (!req.query.name) res.locals.query = "%%"
+	else res.locals.query = `%${req.query.name}%`
+	next()
+}
+
 export const postGameValidation = async (req, res, next) => {
 	const categoriesIds = await getCategoriesId()
 	const schema = Joi.object({

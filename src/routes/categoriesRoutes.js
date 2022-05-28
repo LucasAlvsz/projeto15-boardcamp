@@ -4,11 +4,11 @@ import {
 	getCategories,
 	postCategory,
 } from "../controllers/categoriesController.js"
-import { postValidation } from "../middlewares/categoriesMiddleware.js"
+import { postCategoriesValidation } from "../middlewares/categoriesMiddleware.js"
 
 const categoriesRouter = Router()
 
 categoriesRouter.get("/categories", getCategories)
-categoriesRouter.post("/categories", postValidation, postCategory)
+categoriesRouter.post("/categories", postCategoriesValidation, postCategory)
 
 export default categoriesRouter
