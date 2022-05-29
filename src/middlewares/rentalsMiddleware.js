@@ -1,7 +1,7 @@
 import Joi from "joi"
 import validateCustomerId from "../services/validateCustomerId.js"
 import validateGameCategoryId from "../services/validateGameCategoryId.js"
-import { validateGameStock } from "../services/validadeGameStock.js"
+import validateGameStock from "../services/validadeGameStock.js"
 
 export const getRentalsValidation = async (req, res, next) => {
 	const { customerId, gameId } = req.query
@@ -9,7 +9,7 @@ export const getRentalsValidation = async (req, res, next) => {
 	let params = []
 	if (customerId && gameId) {
 		const customerIdValidation = await validateCustomerId(customerId)
-		const gameIdValidation = await validateCategoryId(gameId)
+		const gameIdValidation = await validateGameCategoryId(gameId)
 		if (customerIdValidation === -1 || gameIdValidation === -1)
 			return res.sendStatus(500)
 		else if (!customerIdValidation || !gameIdValidation)
@@ -34,7 +34,7 @@ export const getRentalsValidation = async (req, res, next) => {
 	next()
 }
 
-export const postRental = async (req, res, next) => {
+export const postRentalValidation = async (req, res, next) => {
 	const schema = Joi.object({
 		customerId: Joi.number().required(),
 		gameId: Joi.number().required(),

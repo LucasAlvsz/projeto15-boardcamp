@@ -52,21 +52,31 @@ export const postRental = async (req, res) => {
 		await db.query(
 			`--sql
             INSERT INTO rentals ("customerId", "gameId", "daysRented", "rentDate", "originalPrice")
-            VALUES ($1, $2, $3, $4, %3 * 
+            VALUES ($1, $2, $3, $4, $3 * 
                     (SELECT "pricePerDay" FROM games WHERE id = $2) )
         `,
 			params
 		)
+		res.sendStatus(201)
 	} catch (err) {
 		res.sendStatus(500)
 	}
 }
 
-// export const finalizeRental = async (req, res) => {
-//     const { id } = req.params
-//     try{
-//         await db.query(`--sql
-//             UPDATE rentals SET returnDate = $1
-//         `)
-//     }
-// }
+export const finalizeRent = async (req, res) => {
+	const { id } = req.params
+	try {
+		await db.query(
+			`--sql
+            UPDATE rentals SET "returnDate" = $2, 
+                "delayFee" = (($2 - (SELECT "rentDate" FROM rentals WHERE id = $1)) * games."pricePerDay")
+                FROM games WHERE rentals.id = $1 AND rentals."gameId" = games.id
+        `,
+			[id, getTodaysDate()]
+		)
+		res.sendStatus(200)
+	} catch (err) {
+		console.log(err)
+		res.sendStatus(500)
+	}
+}
