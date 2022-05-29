@@ -57,7 +57,7 @@ export const postRentalValidation = async (req, res, next) => {
 	next()
 }
 
-export const finalizeRentalValidation = async (req, res, next) => {
+export const finalizeAndDeleteRentalValidation = async (req, res, next) => {
 	const schema = Joi.object({
 		id: Joi.number().required(),
 	})
@@ -66,7 +66,7 @@ export const finalizeRentalValidation = async (req, res, next) => {
 		return res.status(400).send(error.details.map(({ message }) => message))
 	const rentalIdValidation = await validateRentalId(req.params.id)
 	if (rentalIdValidation === -1) return res.sendStatus(500)
-	else if (!rentalIdValidation) return res.sendStatus(400)
+	else if (!rentalIdValidation) return res.sendStatus(404)
 	const rentalStatusValidation = await validateRentalStatus(req.params.id)
 	if (rentalStatusValidation === -1) return res.sendStatus(500)
 	else if (!rentalStatusValidation) return res.sendStatus(400)
