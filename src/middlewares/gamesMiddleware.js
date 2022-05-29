@@ -1,5 +1,5 @@
 import Joi from "joi"
-import validateCategoryId from "../services/validateCategoryId.js"
+import validateGameCategoryId from "../services/validateGameCategoryId.js"
 
 export const getGamesFormatter = async (req, res, next) => {
 	if (!req.query.name) res.locals.query = "%"
@@ -19,7 +19,7 @@ export const postGameValidation = async (req, res, next) => {
 	if (error)
 		return res.status(400).send(error.details.map(({ message }) => message))
 
-	const idValidation = await validateCategoryId(req.body.categoryId)
+	const idValidation = await validateGameCategoryId(req.body.categoryId)
 	if (idValidation === -1) return res.sendStatus(500)
 	if (!idValidation) return res.sendStatus(400)
 	next()

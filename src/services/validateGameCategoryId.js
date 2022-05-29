@@ -1,6 +1,6 @@
 import db from "../db/index.js"
 
-export const validateCategoryId = async id => {
+export const validateGameCategoryId = async id => {
 	try {
 		const { rows } = await db.query(
 			`--sql
@@ -13,4 +13,4 @@ export const validateCategoryId = async id => {
 	}
 }
 
-export default validateCategoryId
+export default validateGameCategoryId

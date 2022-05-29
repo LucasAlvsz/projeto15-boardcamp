@@ -1,0 +1,72 @@
+import db from "../db/index.js"
+import getTodaysDate from "../utils/getTodaysDate.js"
+
+export const getRentals = async (req, res) => {
+	const { query, params } = res.locals
+	try {
+		const { rows } = await db.query(
+			`--sql
+            SELECT rentals.*, customers.id AS "customerId", customers.name AS "customerName", 
+                games.id AS "gameId", games.name AS "gameName", games."categoryId" AS "categoryId",
+                categories.name AS "categoryName" 
+            FROM rentals 
+                JOIN customers ON rentals."customerId" = customers.id
+                    JOIN games ON rentals."gameId" = games.id 
+                        JOIN categories ON games."categoryId" = categories.id
+            
+        ` + query,
+			params
+		)
+		const formattedRows = rows.map(row => {
+			return {
+				id: row.id,
+				customerId: row.customerId,
+				gameId: row.gameId,
+				rentDate: row.rentDate,
+				daysRented: row.daysRented,
+				returnDate: row.returnDate,
+				originalReturnDate: row.originalReturnDate,
+				delayFee: row.delayFee,
+				customer: {
+					id: row.customerId,
+					name: row.customerName,
+				},
+				game: {
+					id: row.gameId,
+					name: row.gameName,
+					categoryId: row.categoryId,
+					categoryName: row.categoryName,
+				},
+			}
+		})
+		res.send(formattedRows)
+	} catch (err) {
+		res.sendStatus(500)
+	}
+}
+
+export const postRental = async (req, res) => {
+	const { customerId, gameId, daysRented } = req.body
+	const params = [customerId, gameId, daysRented, getTodaysDate()]
+	try {
+		await db.query(
+			`--sql
+            INSERT INTO rentals ("customerId", "gameId", "daysRented", "rentDate", "originalPrice")
+            VALUES ($1, $2, $3, $4, %3 * 
+                    (SELECT "pricePerDay" FROM games WHERE id = $2) )
+        `,
+			params
+		)
+	} catch (err) {
+		res.sendStatus(500)
+	}
+}
+
+// export const finalizeRental = async (req, res) => {
+//     const { id } = req.params
+//     try{
+//         await db.query(`--sql
+//             UPDATE rentals SET returnDate = $1
+//         `)
+//     }
+// }
