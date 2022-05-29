@@ -2,6 +2,8 @@ import Joi from "joi"
 import validateCustomerId from "../services/validateCustomerId.js"
 import validateGameCategoryId from "../services/validateGameCategoryId.js"
 import validateGameStock from "../services/validadeGameStock.js"
+import validateRentalStatus from "../services/validateRentalStatus.js"
+import validateRentalId from "../services/validateRentalId.js"
 
 export const getRentalsValidation = async (req, res, next) => {
 	const { customerId, gameId } = req.query
@@ -52,5 +54,21 @@ export const postRentalValidation = async (req, res, next) => {
 	const gameStockValidation = await validateGameStock(req.body.gameId)
 	if (gameStockValidation === -1) return res.sendStatus(500)
 	else if (!gameStockValidation) return res.sendStatus(400)
+	next()
+}
+
+export const finalizeRentalValidation = async (req, res, next) => {
+	const schema = Joi.object({
+		id: Joi.number().required(),
+	})
+	const { error } = schema.validate(req.params, { abortEarly: false })
+	if (error)
+		return res.status(400).send(error.details.map(({ message }) => message))
+	const rentalIdValidation = await validateRentalId(req.params.id)
+	if (rentalIdValidation === -1) return res.sendStatus(500)
+	else if (!rentalIdValidation) return res.sendStatus(400)
+	const rentalStatusValidation = await validateRentalStatus(req.params.id)
+	if (rentalStatusValidation === -1) return res.sendStatus(500)
+	else if (!rentalStatusValidation) return res.sendStatus(400)
 	next()
 }
