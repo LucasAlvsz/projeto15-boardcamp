@@ -8,7 +8,7 @@ export const getGames = async (req, res) => {
 				SELECT games.*, categories.name as "categoryName" 
 				FROM games
 				JOIN categories ON games."categoryId" = categories.id
-				WHERE games.name ILIKE $1 OFFSET $2 LIMIT} $3
+				WHERE games.name ILIKE $1 OFFSET $2 LIMIT $3
 				`,
 			[query, ...params]
 		)
