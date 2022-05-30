@@ -31,6 +31,11 @@ export const postCustomersValidation = async (req, res, next) => {
 	const { error } = schema.validate(req.body, { abortEarly: false })
 	if (error)
 		return res.status(400).send(error.details.map(({ message }) => message))
+
+	const cpfValidation = await validateCustomerCpf(req.body.cpf, req.params.id)
+	if (cpfValidation === -1) return res.sendStatus(500)
+	if (cpfValidation) return res.sendStatus(409)
+
 	next()
 }
 
@@ -55,7 +60,7 @@ export const putCustomerValidation = async (req, res, next) => {
 	if (idValidation === -1) return res.sendStatus(500)
 	if (!idValidation) return res.sendStatus(404)
 
-	const cpfValidation = await validateCustomerCpf(req.body.cpf)
+	const cpfValidation = await validateCustomerCpf(req.body.cpf, req.params.id)
 	if (cpfValidation === -1) return res.sendStatus(500)
 	if (cpfValidation) return res.sendStatus(409)
 	next()
