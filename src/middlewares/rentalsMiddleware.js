@@ -1,6 +1,6 @@
 import Joi from "joi"
 import validateCustomerId from "../services/validateCustomerId.js"
-import validateGameCategoryId from "../services/validateGameCategoryId.js"
+import validateGameId from "../services/validateGameId.js"
 import validateGameStock from "../services/validadeGameStock.js"
 import validateRentalStatus from "../services/validateRentalStatus.js"
 import validateRentalId from "../services/validateRentalId.js"
@@ -46,7 +46,7 @@ export const postRentalValidation = async (req, res, next) => {
 	if (error)
 		return res.status(400).send(error.details.map(({ message }) => message))
 	const customerIdValidation = await validateCustomerId(req.body.customerId)
-	const gameIdValidation = await validateGameCategoryId(req.body.gameId)
+	const gameIdValidation = await validateGameId(req.body.gameId)
 	if (customerIdValidation === -1 || gameIdValidation === -1)
 		return res.sendStatus(500)
 	else if (!customerIdValidation || !gameIdValidation)

@@ -10,7 +10,7 @@ export const validateGameStock = async gameId => {
         `,
 			[gameId]
 		)
-		if (rows.length > rows[0]?.stockTotal) return false
+		if (rows.length >= rows[0]?.stockTotal) return false
 		return true
 	} catch (err) {
 		console.log(err)
