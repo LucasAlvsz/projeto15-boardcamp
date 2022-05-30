@@ -11,7 +11,6 @@ export const validateRentalId = async rentalId => {
 		if (rows.length === 0) return false
 		return true
 	} catch (err) {
-		console.log(err)
 		return -1
 	}
 }
