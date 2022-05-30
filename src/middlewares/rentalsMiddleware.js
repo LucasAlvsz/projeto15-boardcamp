@@ -25,7 +25,7 @@ export const getRentalsValidation = async (req, res, next) => {
 		query = `WHERE rentals."customerId" = $1`
 		params = [customerId]
 	} else if (gameId) {
-		const gameIdValidation = await validateCategoryId(gameId)
+		const gameIdValidation = await validateGameCategoryId(gameId)
 		if (gameIdValidation === -1) return res.sendStatus(500)
 		else if (!gameIdValidation) return res.sendStatus(400)
 		query = `WHERE rentals."gameId" = $1`
