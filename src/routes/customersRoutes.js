@@ -21,6 +21,7 @@ customersRouter.get(
 	"/customers",
 	getCustomersFormatter,
 	paginationFormatter,
+	orderByFormatter,
 	getCustomers
 )
 customersRouter.get("/customers/:id", getCustomerValidation, getCustomer)

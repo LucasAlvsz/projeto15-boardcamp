@@ -2,11 +2,12 @@ import db from "../db/index.js"
 
 export const getCustomers = async (req, res) => {
 	const { query, params } = res.locals
+	const orderByIdentifier = params.pop()
 	try {
 		const { rows } = await db.query(
 			`--sql
             SELECT * FROM customers 
-            WHERE cpf LIKE $1 OFFSET $2 LIMIT $3 
+            WHERE cpf LIKE $1 ORDER BY ${orderByIdentifier} OFFSET $2 LIMIT $3 
         `,
 			[query, ...params]
 		)

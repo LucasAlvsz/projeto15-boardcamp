@@ -12,6 +12,7 @@ import {
 	finalizeAndDeleteRentalValidation,
 } from "../middlewares/rentalsMiddleware.js"
 import { paginationFormatter } from "../middlewares/paginationMiddleware.js"
+import { orderByFormatter } from "../middlewares/orderByMiddleware.js"
 
 const rentalsRouter = Router()
 
@@ -19,6 +20,7 @@ rentalsRouter.get(
 	"/rentals",
 	getRentalsValidation,
 	paginationFormatter,
+	orderByFormatter,
 	getRentals
 )
 rentalsRouter.post("/rentals", postRentalValidation, postRental)

@@ -2,17 +2,17 @@ import db from "../db/index.js"
 
 export const getCategories = async (req, res) => {
 	const { params } = res.locals
+	const orderByIdentifier = params.pop()
 	try {
 		const { rows } = await db.query(
 			`--sql $3
-		SELECT * FROM categories OFFSET $1 LIMIT $2 
+		SELECT * FROM categories ORDER BY ${orderByIdentifier} OFFSET $1 LIMIT $2 
 		`,
 			params
 		)
 		res.send(rows)
 	} catch (err) {
 		res.sendStatus(500)
-		console.log(err)
 	}
 }
 

@@ -1,7 +1,7 @@
 import Joi from "joi"
 
 export const orderByFormatter = (req, res, next) => {
-	const { order } = req.query
+	const { order, desc } = req.query
 	const schema = Joi.object({
 		order: Joi.string().valid(),
 		desc: Joi.boolean(),
@@ -11,8 +11,9 @@ export const orderByFormatter = (req, res, next) => {
 		return res.status(400).send(error.details.map(({ message }) => message))
 
 	let params = []
-	if (order) params.push(order)
-	else params.push(`name`)
+	if (order && desc === "true") params.push(`${order} DESC`)
+	else if (order) params.push(order)
+	else params.push(`id`)
 
 	res.locals.params = [...res.locals.params, ...params]
 	next()

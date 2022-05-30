@@ -2,13 +2,14 @@ import db from "../db/index.js"
 
 export const getGames = async (req, res) => {
 	const { query, params } = res.locals
+	const orderByIdentifier = params.pop()
 	try {
 		const { rows } = await db.query(
 			`--sql
 				SELECT games.*, categories.name as "categoryName" 
 				FROM games
 				JOIN categories ON games."categoryId" = categories.id
-				WHERE games.name ILIKE $1 OFFSET $2 LIMIT $3
+				WHERE games.name ILIKE $1 ORDER BY ${orderByIdentifier} OFFSET $2 LIMIT $3
 				`,
 			[query, ...params]
 		)
