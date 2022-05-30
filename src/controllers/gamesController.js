@@ -15,7 +15,15 @@ export const getGames = async (req, res) => {
 		)
 		res.send(rows)
 	} catch (err) {
-		console.log(err)
+		if (err.code === "42702")
+			return res
+				.status(400)
+				.send(`column reference '${orderByIdentifier}' is ambiguous`)
+		else if (err.code === "42703")
+			return res
+				.status(400)
+				.send(`'${orderByIdentifier}' is not a valid column name`)
+
 		res.sendStatus(500)
 	}
 }
@@ -32,7 +40,6 @@ export const postGame = async (req, res) => {
 		res.sendStatus(201)
 	} catch (err) {
 		if (err.code === "23505") return res.sendStatus(409)
-		console.log(err)
 		res.sendStatus(500)
 	}
 }

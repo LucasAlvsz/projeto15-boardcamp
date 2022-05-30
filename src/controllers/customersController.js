@@ -13,8 +13,15 @@ export const getCustomers = async (req, res) => {
 		)
 		res.send(rows)
 	} catch (err) {
+		if (err.code === "42702")
+			return res
+				.status(400)
+				.send(`column reference '${orderByIdentifier}' is ambiguous`)
+		else if (err.code === "42703")
+			return res
+				.status(400)
+				.send(`'${orderByIdentifier}' is not a valid column name`)
 		res.sendStatus(500)
-		console.log(err)
 	}
 }
 

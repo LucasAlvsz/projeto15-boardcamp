@@ -14,8 +14,8 @@ export const getRentals = async (req, res) => {
                 JOIN customers ON rentals."customerId" = customers.id
                     JOIN games ON rentals."gameId" = games.id 
                         JOIN categories ON games."categoryId" = categories.id
-			ORDER BY ${orderByIdentifier} 
-			${query} OFFSET $${rentalParams.length + 1} LIMIT $${rentalParams.length + 2}
+			${query} ORDER BY ${orderByIdentifier} 
+			OFFSET $${rentalParams.length + 1} LIMIT $${rentalParams.length + 2}
         `,
 			[...rentalParams, ...params]
 		)
@@ -44,7 +44,7 @@ export const getRentals = async (req, res) => {
 		})
 
 		// const teste = await db.query(`--sql
-		// 	SELECT rentals.*, json_each({"teste":"customers.id"}), customers.name AS "customerName",
+		// 	SELECT rentals.*, json_build_object(a, json_agg(customers.id), customers.name AS "customerName",
 		// 		games.id AS "gameId", games.name AS "gameName", games."categoryId" AS "categoryId",
 		// 		categories.name AS "categoryName"
 		// 	FROM rentals
@@ -56,8 +56,16 @@ export const getRentals = async (req, res) => {
 		//--sql
 		res.send(formattedRows)
 	} catch (err) {
+		if (err.code === "42702")
+			return res
+				.status(400)
+				.send(`column reference '${orderByIdentifier}' is ambiguous`)
+		else if (err.code === "42703")
+			return res
+				.status(400)
+				.send(`'${orderByIdentifier}' is not a valid column name`)
+
 		res.sendStatus(500)
-		console.log(err)
 	}
 }
 
