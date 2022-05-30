@@ -26,6 +26,7 @@ export const getRentals = async (req, res) => {
 				daysRented: row.daysRented,
 				returnDate: row.returnDate,
 				originalReturnDate: row.originalReturnDate,
+				originalPrice: row.originalPrice,
 				delayFee: row.delayFee,
 				customer: {
 					id: row.customerId,
