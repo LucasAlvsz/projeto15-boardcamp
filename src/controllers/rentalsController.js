@@ -42,18 +42,6 @@ export const getRentals = async (req, res) => {
 				},
 			}
 		})
-
-		// const teste = await db.query(`--sql
-		// 	SELECT rentals.*, json_build_object(a, json_agg(customers.id), customers.name AS "customerName",
-		// 		games.id AS "gameId", games.name AS "gameName", games."categoryId" AS "categoryId",
-		// 		categories.name AS "categoryName"
-		// 	FROM rentals
-		// 		JOIN customers ON rentals."customerId" = customers.id
-		// 			JOIN games ON rentals."gameId" = games.id
-		// 				JOIN categories ON games."categoryId" = categories.id
-		// 	`)
-		// console.log(teste.rows)
-		//--sql
 		res.send(formattedRows)
 	} catch (err) {
 		if (err.code === "42702")

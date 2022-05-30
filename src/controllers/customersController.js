@@ -21,6 +21,7 @@ export const getCustomers = async (req, res) => {
 			return res
 				.status(400)
 				.send(`'${orderByIdentifier}' is not a valid column name`)
+
 		res.sendStatus(500)
 	}
 }
