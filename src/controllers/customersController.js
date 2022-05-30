@@ -1,18 +1,19 @@
 import db from "../db/index.js"
 
 export const getCustomers = async (req, res) => {
-	const { query } = res.locals
+	const { query, params } = res.locals
 	try {
 		const { rows } = await db.query(
 			`--sql
-            SELECT * FROM customers
-            WHERE cpf LIKE $1
+            SELECT * FROM customers 
+            WHERE cpf LIKE $1 OFFSET $2 LIMIT $3 
         `,
-			[query]
+			[query, ...params]
 		)
 		res.send(rows)
 	} catch (err) {
 		res.sendStatus(500)
+		console.log(err)
 	}
 }
 
@@ -42,7 +43,7 @@ export const postCustomers = async (req, res) => {
         `,
 			[name, phone, cpf, birthday]
 		)
-		res.send(201)
+		res.sendStatus(201)
 	} catch (err) {
 		if (err.code === "23505") return res.sendStatus(409)
 		res.sendStatus(500)
@@ -52,9 +53,8 @@ export const postCustomers = async (req, res) => {
 export const putCustomer = async (req, res) => {
 	const { id } = req.params
 	const { name, phone, cpf, birthday } = req.body
-	console.log(name)
 	try {
-		const result = await db.query(
+		await db.query(
 			`--sql
 			UPDATE customers 
 			SET name = $1, phone = $2, cpf = $3, birthday = $4
@@ -62,10 +62,8 @@ export const putCustomer = async (req, res) => {
 		`,
 			[name, phone, cpf, birthday, id]
 		)
-		console.log(result)
 		res.sendStatus(200)
 	} catch (err) {
 		res.sendStatus(500)
-		console.log(err)
 	}
 }

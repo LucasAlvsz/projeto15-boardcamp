@@ -11,7 +11,7 @@ export const getRentalsValidation = async (req, res, next) => {
 	let params = []
 	if (customerId && gameId) {
 		const customerIdValidation = await validateCustomerId(customerId)
-		const gameIdValidation = await validateGameCategoryId(gameId)
+		const gameIdValidation = await validateGameId(gameId)
 		if (customerIdValidation === -1 || gameIdValidation === -1)
 			return res.sendStatus(500)
 		else if (!customerIdValidation || !gameIdValidation)
@@ -25,14 +25,14 @@ export const getRentalsValidation = async (req, res, next) => {
 		query = `WHERE rentals."customerId" = $1`
 		params = [customerId]
 	} else if (gameId) {
-		const gameIdValidation = await validateGameCategoryId(gameId)
+		const gameIdValidation = await validateGameId(gameId)
 		if (gameIdValidation === -1) return res.sendStatus(500)
 		else if (!gameIdValidation) return res.sendStatus(400)
 		query = `WHERE rentals."gameId" = $1`
 		params = [gameId]
 	}
 	res.locals.query = query
-	res.locals.params = params
+	res.locals.rentalParams = params
 	next()
 }
 

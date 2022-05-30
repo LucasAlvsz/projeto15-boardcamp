@@ -2,7 +2,7 @@ import db from "../db/index.js"
 import getTodaysDate from "../utils/getTodaysDate.js"
 
 export const getRentals = async (req, res) => {
-	const { query, params } = res.locals
+	const { query, rentalParams, params } = res.locals
 	try {
 		const { rows } = await db.query(
 			`--sql
@@ -13,9 +13,9 @@ export const getRentals = async (req, res) => {
                 JOIN customers ON rentals."customerId" = customers.id
                     JOIN games ON rentals."gameId" = games.id 
                         JOIN categories ON games."categoryId" = categories.id
-            
-        ` + query,
-			params
+			${query} OFFSET $${rentalParams.length + 1} LIMIT $${rentalParams.length + 2}
+        `,
+			[...rentalParams, ...params]
 		)
 		const formattedRows = rows.map(row => {
 			return {

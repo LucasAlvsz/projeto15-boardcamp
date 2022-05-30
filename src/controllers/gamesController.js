@@ -1,15 +1,16 @@
 import db from "../db/index.js"
 
 export const getGames = async (req, res) => {
-	const { query } = res.locals
+	const { query, params } = res.locals
 	try {
 		const { rows } = await db.query(
 			`--sql
-				SELECT games.*, categories.name as "categoryName" FROM games
+				SELECT games.*, categories.name as "categoryName" 
+				FROM games
 				JOIN categories ON games."categoryId" = categories.id
-				WHERE games.name ILIKE $1
+				WHERE games.name ILIKE $1 OFFSET $2 LIMIT} $3
 				`,
-			[query]
+			[query, ...params]
 		)
 		res.send(rows)
 	} catch (err) {
